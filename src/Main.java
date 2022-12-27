@@ -3,44 +3,62 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Main {
     public static void main(String[] args) throws IOException {
         // 範例1
-//        String[] names= {"Ron", "Wilson", "Harry", "Grace", "Mike"};
-//        Arrays.stream(names)
-//                .filter(name -> name.startsWith("R"))
-//                .forEach(name-> System.out.println(name));
+//        Stream<String> rows = Files.lines(Paths.get("data.txt"), StandardCharsets.UTF_8);
+//        Map<String, Integer> map= rows.map(x->x.split(","))
+//                .filter(x-> x.length == 3)
+//                .filter(x-> Integer.parseInt(x[1]) > 15)
+//                        .collect(Collectors.toMap(
+//                                x-> x[0],
+//                                x -> Integer.parseInt(x[1])
+//                        ));
+//        map.forEach((key, value)-> System.out.println(key+ "," + value));
         // 範例2
-//        Arrays.stream(new int[] {2,4,6,8,10})
-//                .map(n-> n *n)
-//                .average()
-//                .ifPresent(System.out::println);
-        // 範例3
-//        ArrayList<String> people = new ArrayList<>();
-//        people.add("Ron");
-//        people.add("rat");
-//        people.add("Wilson");
-//        people.add("Harry");
-//        people.add("Grace");
-//        people.add("Mike");
-//        people.stream()
-//                .map(String::toLowerCase)
-//                .filter(name->name.startsWith("r"))
-//                .forEach(System.out::println);
-        Stream<String> bands = Files.lines(Paths.get("bands.txt"), StandardCharsets.UTF_8);
-//        bands
-//                .filter(name-> name.length() > 13)
-//                .sorted()
-//                .forEach(System.out::println);
-        List<String> myList =bands
-                .filter(name->name.contains("jit"))
-                        .collect(Collectors.toList());
-        myList.forEach(System.out::println);
+//        IntSummaryStatistics s =  IntStream.of(3,4,5,6,7,8,9,10).summaryStatistics();
+//        System.out.println(s.getMax());
+//        System.out.println(s.getMin());
+//        System.out.println(s.getAverage());
+//        System.out.println(s.getCount());
+//        System.out.println(s.getSum());
+        // 範例3 數字相加
+//        int result=  Stream.of(3,4,5,6,7,8).reduce(0, (Integer a, Integer b)-> a+b);
+//        System.out.println(result);
+        // 範例4 相乘
+//        int result=  Stream.of(3,4,5,6,7,8).reduce(1, (Integer a, Integer b)-> a*b);
+//        System.out.println(result);
+        Random random = new Random();
+        int[] list = random.ints(50000000).toArray();
+
+        System.out.println("Number of processors " + Runtime.getRuntime().availableProcessors());
+
+        long startTime = System.currentTimeMillis();
+        int[] list1 = IntStream.of(list)
+                .filter(e -> e > 0)
+                .sorted()
+                .limit(5)
+                .toArray();
+        System.out.println(Arrays.toString(list1));
+        long endTime = System.currentTimeMillis();
+        System.out.println("Sequential execution is " + (endTime - startTime) + "milliseconds.");
+
+        System.out.println("===================================");
+
+        startTime = System.currentTimeMillis();
+        int[] list2 = IntStream.of(list)
+                .parallel()
+                .filter(e -> e > 0)
+                .sorted()
+                .limit(5)
+                .toArray();
+        System.out.println(Arrays.toString(list2));
+        endTime = System.currentTimeMillis();
+        System.out.println("Parallel execution is " + (endTime - startTime) + "milliseconds.");
     }
 }
